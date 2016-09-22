@@ -1,4 +1,4 @@
-QT = core bluetooth quick
+QT = core bluetooth quick dbus
 SOURCES += qmlscanner.cpp \
     blueconnect.cpp
 

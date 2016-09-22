@@ -43,33 +43,16 @@ import QtQuick 2.0
 import QtBluetooth 5.2
 import QtQuick.Controls 1.4
 
+import org.qt 1.0
+
 Item {
     id: top
 
     property BluetoothService currentService
 
-    BluetoothDiscoveryModel {
+    BlueConnect {
         id: btModel
-        running: true
-        discoveryMode: BluetoothDiscoveryModel.DeviceDiscovery
-        onDiscoveryModeChanged: console.log("Discovery mode: " + discoveryMode)
-        onServiceDiscovered: console.log("Found new service " + service.deviceAddress + " " + service.deviceName + " " + service.serviceName);
-        onDeviceDiscovered: console.log("New device: " + device)
-        onErrorChanged: {
-                switch (btModel.error) {
-                case BluetoothDiscoveryModel.PoweredOffError:
-                    console.log("Error: Bluetooth device not turned on"); break;
-                case BluetoothDiscoveryModel.InputOutputError:
-                    console.log("Error: Bluetooth I/O Error"); break;
-                case BluetoothDiscoveryModel.InvalidBluetoothAdapterError:
-                    console.log("Error: Invalid Bluetooth Adapter Error"); break;
-                case BluetoothDiscoveryModel.NoError:
-                    break;
-                default:
-                    console.log("Error: Unknown Error"); break;
-                }
-        }
-   }
+    }
 
     Rectangle {
         id: busy
@@ -80,7 +63,6 @@ Item {
         height: text.height*1.2;
         radius: 5
         color: "#1c56f3"
-        visible: btModel.running
 
         Text {
             id: text
@@ -108,6 +90,7 @@ Item {
         clip: true
 
         model: btModel
+
         delegate: Rectangle {
             id: btDelegate
             width: parent.width
@@ -131,45 +114,19 @@ Item {
                 anchors.leftMargin: 5
                 Text {
                     id: bttext
-                    text: deviceName ? deviceName : name
+                    text: model.name
                     font.family: "FreeSerif"
                     font.pointSize: 16
                 }
 
-/*                Text {
-                    id: details
-                    function get_details(s) {
-                        if (btModel.discoveryMode == BluetoothDiscoveryModel.DeviceDiscovery) {
-                            //We are doing a device discovery
-                            var str = "Address: " + remoteAddress;
-                            return str;
-                        } else {
-                            var str = "Address: " + s.deviceAddress;
-                            if (s.serviceName) { str += "<br>Service: " + s.serviceName; }
-                            if (s.serviceDescription) { str += "<br>Description: " + s.serviceDescription; }
-                            if (s.serviceProtocol) { str += "<br>Protocol: " + s.serviceProtocol; }
-                            return str;
-                        }
-                    }
-                    visible: opacity !== 0
-                    opacity: btDelegate.expended ? 1 : 0.0
-                    text: get_details(service)
-                    font.family: "FreeSerif"
-                    font.pointSize: 14
-                    Behavior on opacity {
-                        NumberAnimation { duration: 200}
-                    }
-                }*/
             }
             Behavior on height { NumberAnimation { duration: 200} }
 
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    statusText.text = "Current selection: " + deviceName + blue.x;
-                    blue.connect (remoteAddress);
-                    //console.log("Selected: " + deviceName);
-                    //console.log("Selected: " + service.deviceAddress + " " + service.deviceName + " " + service.serviceName);
+                    statusText.text = "Current selection: " + name;
+                    btModel.connect (index);
                 }
             }
         }
