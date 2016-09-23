@@ -88,6 +88,17 @@ void BlueConnect::connect (uint index)
     if (uuid == Q_NULLPTR)
         return;
 
+    if (dev->property("Paired").toBool()) {
+        std::cout << "Device already paired";
+    } else {
+        QDBusReply<void> reply = dev->call("Pair");
+        if (!reply.isValid()) {
+            std::cout << "Failed to pair: " << reply.error().message() << std::endl;
+
+            return;
+        }
+    }
+
     QDBusReply<void> reply = dev->call("ConnectProfile", uuid);
     if (!reply.isValid()) {
         std::cout << "Failed to connect: " << reply.error().message() << std::endl;
