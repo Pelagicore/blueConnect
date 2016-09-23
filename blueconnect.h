@@ -6,8 +6,6 @@
 #include <QtGui>
 #include <QtDBus/QtDBus>
 
-//qRegisterMetaType(QMap<QDBusObjectPath,QMap<QString,QVariantMap >)
-
 class BlueConnect : public QAbstractListModel
 {
     Q_OBJECT
@@ -22,6 +20,7 @@ public:
     ~BlueConnect();
 
     Q_INVOKABLE void connect (uint index);
+    Q_INVOKABLE void disconnect ();
 
     // QAbstractItemModel interface
     virtual int rowCount(const QModelIndex &parent) const;
@@ -33,6 +32,7 @@ protected:
 
 private:
     QList<QDBusInterface *> devices;
+    QDBusInterface *connected;
     QHash<int, QByteArray> roles;
 };
 

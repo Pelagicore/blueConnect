@@ -155,8 +155,9 @@ Item {
         spacing: 10
 
         Button {
-            text: "Connect"
-            onClicked: qPrint("clicks")
+            text: "Disonnect"
+            enabled: btModel.connected
+            onClicked: btModel.disconnect()
         }
    }
 

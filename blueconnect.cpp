@@ -77,13 +77,38 @@ BlueConnect::~BlueConnect()
 
 void BlueConnect::connect (uint index)
 {
+    if (connected != Q_NULLPTR)
+        return;
+
     QDBusInterface *dev = devices[index];
     QString address = dev->property("Address").toString();
     std::cout << "will connect to:" << address << std::endl;
 
     QString uuid = getAudioSourceUUID(dev);
-    if (uuid != Q_NULLPTR)
-        dev->call("ConnectProfile", uuid);
+    if (uuid == Q_NULLPTR)
+        return;
+
+    QDBusReply<void> reply = dev->call("ConnectProfile", uuid);
+    if (!reply.isValid()) {
+        std::cout << "Failed to connect: " << reply.error().message() << std::endl;
+
+        return;
+    }
+    connected = dev;
+}
+
+void BlueConnect::disconnect ()
+{
+    if (connected == Q_NULLPTR)
+        return;
+
+    QDBusReply<void> reply = connected->call("Disconnect");
+    if (!reply.isValid()) {
+        std::cout << "Failed to disconnect: " << reply.error().message() << std::endl;
+
+        return;
+    }
+    connected = Q_NULLPTR;
 }
 
 // QAbstractItemModel interface
