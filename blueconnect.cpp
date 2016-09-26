@@ -113,6 +113,9 @@ void BlueConnect::disconnect ()
     if (connected == Q_NULLPTR)
         return;
 
+    QString name = connected->property("Name").toString();
+    std::cout << "Disconnecting " << name << std::endl;
+
     QDBusReply<void> reply = connected->call("Disconnect");
     if (!reply.isValid()) {
         std::cout << "Failed to disconnect: " << reply.error().message() << std::endl;
