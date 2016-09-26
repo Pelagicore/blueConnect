@@ -89,7 +89,7 @@ void BlueConnect::connect (uint index)
         return;
 
     if (dev->property("Paired").toBool()) {
-        std::cout << "Device already paired";
+        std::cout << "Device already paired" << std::endl;
     } else {
         QDBusReply<void> reply = dev->call("Pair");
         if (!reply.isValid()) {
