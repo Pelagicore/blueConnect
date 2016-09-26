@@ -138,9 +138,9 @@ QVariant BlueConnect::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case NameRole:
-        return devices[0]->property("Name");
+        return devices[row]->property("Name");
     case AddressRole:
-        return devices[0]->property("Address");
+        return devices[row]->property("Address");
     default:
         return QVariant();
     }
