@@ -7,10 +7,9 @@ std::ostream& operator<<(std::ostream& str, const QString& string) {
 
 QString getAudioSourceUUID(QDBusInterface *dev)
 {
-    QStringList uuids = dev->property("UUIDs").toStringList();
+    auto uuids = dev->property("UUIDs").toStringList();
 
-    QStringList::iterator k;
-    for (k = uuids.begin(); k != uuids.end(); ++k) {
+    for (auto k = uuids.begin(); k != uuids.end(); ++k) {
         QString str = (*k);
         QStringList parts = str.split("-");
         if (parts.length() < 1) {
@@ -48,14 +47,12 @@ BlueConnect::BlueConnect(QObject *parent) : QAbstractListModel(parent)
         return;
     }
 
-    QMap<QDBusObjectPath,QMap<QString,QVariantMap> > objects = reply.value();
-    QMap<QDBusObjectPath,QMap<QString,QVariantMap> >::iterator i;
+    auto objects = reply.value();
 
-    for (i = objects.begin(); i != objects.end(); ++i) {
-        QMap<QString,QVariantMap> ifaces = i.value();
-        QMap<QString,QVariantMap>::iterator j;
+    for (auto i = objects.begin(); i != objects.end(); ++i) {
+        auto ifaces = i.value();
 
-        for (j = ifaces.begin(); j != ifaces.end(); ++j) {
+        for (auto j = ifaces.begin(); j != ifaces.end(); ++j) {
             if (j.key() != "org.bluez.Device1")
                 continue;
 
@@ -64,15 +61,11 @@ BlueConnect::BlueConnect(QObject *parent) : QAbstractListModel(parent)
                                       i.key().path(),
                                       "org.bluez.Device1",
                                       QDBusConnection::systemBus());
-            QString uuid = getAudioSourceUUID(dev);
+            auto uuid = getAudioSourceUUID(dev);
             if (uuid != Q_NULLPTR)
                 devices << dev;
         }
     }
-}
-
-BlueConnect::~BlueConnect()
-{
 }
 
 void BlueConnect::connect (uint index)
@@ -80,11 +73,11 @@ void BlueConnect::connect (uint index)
     if (connected != Q_NULLPTR)
         return;
 
-    QDBusInterface *dev = devices[index];
-    QString address = dev->property("Address").toString();
+    auto dev = devices[index];
+    auto address = dev->property("Address").toString();
     std::cout << "will connect to:" << address << std::endl;
 
-    QString uuid = getAudioSourceUUID(dev);
+    auto uuid = getAudioSourceUUID(dev);
     if (uuid == Q_NULLPTR)
         return;
 
@@ -113,7 +106,7 @@ void BlueConnect::disconnect ()
     if (connected == Q_NULLPTR)
         return;
 
-    QString name = connected->property("Name").toString();
+    auto name = connected->property("Name").toString();
     std::cout << "Disconnecting " << name << std::endl;
 
     QDBusReply<void> reply = connected->call("Disconnect");
