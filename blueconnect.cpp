@@ -35,12 +35,75 @@ BlueConnect::BlueConnect(QObject *parent) : QAbstractListModel(parent)
     qDBusRegisterMetaType <InterfacesMap> ();
     qDBusRegisterMetaType <ObjectsMap> ();
 
-    QDBusInterface manager("org.bluez",
-                           "/",
-                           "org.freedesktop.DBus.ObjectManager",
-                           QDBusConnection::systemBus());
-    QDBusReply<ObjectsMap> reply;
-    reply = manager.call("GetManagedObjects");
+    manager = new QDBusInterface("org.bluez",
+                                 "/",
+                                 "org.freedesktop.DBus.ObjectManager",
+                                 QDBusConnection::systemBus());
+
+    fetchDevices();
+
+    QObject::connect(manager,
+                     SIGNAL(InterfacesAdded(QDBusObjectPath, InterfacesMap)),
+                     this,
+                     SLOT(onInterfacesAdded));
+    QObject::connect(manager,
+                     SIGNAL(InterfacesRemoved(QDBusObjectPath, QList<QString>)),
+                     this,
+                     SLOT(onInterfacesRemoved(QDBusObjectPath, QList<QString>)));
+}
+
+BlueConnect::~BlueConnect()
+{
+}
+
+void BlueConnect::onInterfacesAdded(QDBusObjectPath path,
+                                    QMap<QString,QVariantMap> interfaces)
+{
+    for (auto i = interfaces.begin(); i != interfaces.end(); ++i) {
+        if (i.key() == "org.bluez.Device1") {
+            std::cout << "'org.bluez.Device1' interface added at "
+                      << path.path()
+                      << std::endl;
+
+            addDevice (path);
+
+            break;
+        }
+    }
+}
+
+void BlueConnect::onInterfacesRemoved(QDBusObjectPath path,
+                                      QList<QString> interfaces)
+{
+    bool ignore = true;
+
+    for (auto i = interfaces.begin(); i != interfaces.end(); ++i) {
+        if (*i == "org.bluez.Device1") {
+            ignore = false;
+            std::cout << "'org.bluez.Device1' interface removed from "
+                      << path.path()
+                      << std::endl;
+
+            break;
+        }
+    }
+
+    if (ignore)
+        return;
+
+    for (int i = 0; i < devices.length(); i++) {
+        if (path.path() == devices[0]->path()) {
+            emit beginRemoveRows(QModelIndex(), i, i);
+            devices.removeAt(i);
+            emit endRemoveRows();
+        }
+    }
+}
+
+void BlueConnect::fetchDevices(void)
+{
+    QDBusReply<QMap<QDBusObjectPath,QMap<QString,QVariantMap > > > reply;
+    reply = manager->call("GetManagedObjects");
     if (!reply.isValid()) {
         std::cout << "Failed to connect to bluez: " << reply.error().message() << std::endl;
 
@@ -53,23 +116,37 @@ BlueConnect::BlueConnect(QObject *parent) : QAbstractListModel(parent)
         auto ifaces = i.value();
 
         for (auto j = ifaces.begin(); j != ifaces.end(); ++j) {
-            if (j.key() != "org.bluez.Device1")
-                continue;
-
-            QDBusInterface *dev;
-            dev = new QDBusInterface ("org.bluez",
-                                      i.key().path(),
-                                      "org.bluez.Device1",
-                                      QDBusConnection::systemBus());
-            auto uuid = getAudioSourceUUID(dev);
-            if (uuid != Q_NULLPTR)
-                devices << dev;
+            if (j.key() == "org.bluez.Device1")
+                addDevice (i.key());
         }
     }
 }
 
-BlueConnect::~BlueConnect()
+void BlueConnect::addDevice(QDBusObjectPath path)
 {
+    QDBusInterface *dev;
+    dev = new QDBusInterface ("org.bluez",
+                              path.path(),
+                              "org.bluez.Device1",
+                              QDBusConnection::systemBus());
+    auto uuid = getAudioSourceUUID(dev);
+    if (uuid != Q_NULLPTR && !checkExistingDev(dev)) {
+        emit beginInsertRows(QModelIndex(), devices.length(), devices.length());
+        devices << dev;
+        emit endInsertRows();
+    }
+}
+
+bool BlueConnect::checkExistingDev(QDBusInterface *dev)
+{
+    for (auto i = devices.begin(); i != devices.end(); ++i) {
+        auto existing = *i;
+
+        if (existing->path() == dev->path())
+            return true;
+    }
+
+    return false;
 }
 
 void BlueConnect::connect (uint index)

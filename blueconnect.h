@@ -37,8 +37,17 @@ protected:
     // return the roles mapping to be used by QML
     virtual QHash<int, QByteArray> roleNames() const override;
 
+private slots:
+    void onInterfacesAdded(QDBusObjectPath path, QMap<QString,QVariantMap> interfaces);
+    void onInterfacesRemoved(QDBusObjectPath path, QList<QString> interfaces);
+
 private:
+    void fetchDevices(void);
+    void addDevice(QDBusObjectPath path);
+    bool checkExistingDev(QDBusInterface *dev);
+
     QList<QDBusInterface *> devices;
+    QDBusInterface *manager;
     QDBusInterface *connected;
     QHash<int, QByteArray> roles;
 };
