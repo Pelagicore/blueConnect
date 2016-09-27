@@ -6,8 +6,7 @@
 #include <QtGui>
 #include <QtDBus/QtDBus>
 
-
-typedef QMap<QString,QVariantMap > InterfacesMap;
+typedef QMap<QString,QVariantMap> InterfacesMap;
 typedef QMap<QDBusObjectPath,InterfacesMap> ObjectsMap;
 
 Q_DECLARE_METATYPE(InterfacesMap)
