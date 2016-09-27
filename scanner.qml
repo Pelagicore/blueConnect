@@ -81,6 +81,7 @@ Item {
     }
 
     ListView {
+        enabled: !btModel.isConnected
         id: mainList
         width: top.width
         anchors.top: busy.bottom
