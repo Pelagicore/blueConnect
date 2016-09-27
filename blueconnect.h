@@ -6,6 +6,13 @@
 #include <QtGui>
 #include <QtDBus/QtDBus>
 
+
+typedef QMap<QString,QVariantMap > InterfacesMap;
+typedef QMap<QDBusObjectPath,InterfacesMap> ObjectsMap;
+
+Q_DECLARE_METATYPE(InterfacesMap)
+Q_DECLARE_METATYPE(ObjectsMap)
+
 class BlueConnect : public QAbstractListModel
 {
     Q_OBJECT

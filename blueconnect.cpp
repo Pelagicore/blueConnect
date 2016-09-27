@@ -32,14 +32,14 @@ BlueConnect::BlueConnect(QObject *parent) : QAbstractListModel(parent)
     roles[NameRole] = "name";
     roles[AddressRole] = "address";
 
-    qDBusRegisterMetaType <QMap<QString,QVariantMap > > ();
-    qDBusRegisterMetaType <QMap<QDBusObjectPath,QMap<QString,QVariantMap > > > ();
+    qDBusRegisterMetaType <InterfacesMap> ();
+    qDBusRegisterMetaType <ObjectsMap> ();
 
     QDBusInterface manager("org.bluez",
                            "/",
                            "org.freedesktop.DBus.ObjectManager",
                            QDBusConnection::systemBus());
-    QDBusReply<QMap<QDBusObjectPath,QMap<QString,QVariantMap > > > reply;
+    QDBusReply<ObjectsMap> reply;
     reply = manager.call("GetManagedObjects");
     if (!reply.isValid()) {
         std::cout << "Failed to connect to bluez: " << reply.error().message() << std::endl;
@@ -66,6 +66,10 @@ BlueConnect::BlueConnect(QObject *parent) : QAbstractListModel(parent)
                 devices << dev;
         }
     }
+}
+
+BlueConnect::~BlueConnect()
+{
 }
 
 void BlueConnect::connect (uint index)
