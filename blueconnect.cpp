@@ -35,29 +35,39 @@ BlueConnect::BlueConnect(QObject *parent) : QAbstractListModel(parent)
     qDBusRegisterMetaType <InterfacesMap> ();
     qDBusRegisterMetaType <ObjectsMap> ();
 
+    auto bus = QDBusConnection::systemBus();
     manager = new QDBusInterface("org.bluez",
                                  "/",
                                  "org.freedesktop.DBus.ObjectManager",
-                                 QDBusConnection::systemBus());
+                                 bus);
 
     fetchDevices();
 
-    QObject::connect(manager,
-                     SIGNAL(InterfacesAdded(QDBusObjectPath, InterfacesMap)),
+    if (!bus.connect("org.bluez",
+                     "/",
+                     "org.freedesktop.DBus.ObjectManager",
+                     "InterfacesAdded",
                      this,
-                     SLOT(onInterfacesAdded));
-    QObject::connect(manager,
-                     SIGNAL(InterfacesRemoved(QDBusObjectPath, QList<QString>)),
+                     SLOT(onInterfacesAdded(const QDBusObjectPath &, const InterfacesMap)))) {
+        qWarning() << "Failed to connect InterfacesAdded signal";
+    }
+
+    if (!bus.connect("org.bluez",
+                     "/",
+                     "org.freedesktop.DBus.ObjectManager",
+                     "InterfacesRemoved",
                      this,
-                     SLOT(onInterfacesRemoved(QDBusObjectPath, QList<QString>)));
+                     SLOT(onInterfacesRemoved(const QDBusObjectPath &, const QStringList)))) {
+        qWarning() << "Failed to connect InterfacesRemoved signal";
+    }
 }
 
 BlueConnect::~BlueConnect()
 {
 }
 
-void BlueConnect::onInterfacesAdded(QDBusObjectPath path,
-                                    QMap<QString,QVariantMap> interfaces)
+void BlueConnect::onInterfacesAdded(const QDBusObjectPath &path,
+                                    const InterfacesMap interfaces)
 {
     for (auto i = interfaces.begin(); i != interfaces.end(); ++i) {
         if (i.key() == "org.bluez.Device1") {
@@ -72,8 +82,8 @@ void BlueConnect::onInterfacesAdded(QDBusObjectPath path,
     }
 }
 
-void BlueConnect::onInterfacesRemoved(QDBusObjectPath path,
-                                      QList<QString> interfaces)
+void BlueConnect::onInterfacesRemoved(const QDBusObjectPath &path,
+                                      const QStringList interfaces)
 {
     bool ignore = true;
 
