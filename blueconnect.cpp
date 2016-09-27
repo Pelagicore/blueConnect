@@ -180,6 +180,7 @@ void BlueConnect::connect (uint index)
         return;
     }
     connected = dev;
+    emit connectionChanged();
 }
 
 void BlueConnect::disconnect ()
@@ -197,6 +198,7 @@ void BlueConnect::disconnect ()
         return;
     }
     connected = Q_NULLPTR;
+    emit connectionChanged();
 }
 
 // QAbstractItemModel interface
@@ -226,4 +228,9 @@ QVariant BlueConnect::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> BlueConnect::roleNames() const
 {
     return roles;
+}
+
+bool BlueConnect::isConnected() const
+{
+    return (connected != Q_NULLPTR);
 }

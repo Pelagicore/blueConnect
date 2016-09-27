@@ -156,7 +156,7 @@ Item {
 
         Button {
             text: "Disonnect"
-            //enabled: btModel.connected
+            enabled: btModel.isConnected
             onClicked: btModel.disconnect()
         }
    }

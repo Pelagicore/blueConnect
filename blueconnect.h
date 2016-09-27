@@ -26,12 +26,18 @@ public:
     explicit BlueConnect(QObject *parent=0);
     ~BlueConnect();
 
+    Q_PROPERTY(bool isConnected READ isConnected NOTIFY connectionChanged)
+
     Q_INVOKABLE void connect (uint index);
     Q_INVOKABLE void disconnect ();
+    bool isConnected() const;
 
     // QAbstractItemModel interface
     virtual int rowCount(const QModelIndex &parent) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
+
+signals:
+    void connectionChanged();
 
 protected:
     // return the roles mapping to be used by QML
