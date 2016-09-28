@@ -92,8 +92,6 @@ Item {
 
         model: btModel
 
-        //highlight: ListHighlight { }
-
         delegate: Rectangle {
             id: btDelegate
             width: parent.width
