@@ -54,37 +54,11 @@ Item {
         id: btModel
     }
 
-    Rectangle {
-        id: busy
-
-        width: top.width * 0.7;
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: top.top;
-        height: text.height*1.2;
-        radius: 5
-        color: "#1c56f3"
-
-        Text {
-            id: text
-            text: "Scanning"
-            font.bold: true
-            font.pointSize: 20
-            anchors.centerIn: parent
-        }
-
-        SequentialAnimation on color {
-            id: busyThrobber
-            ColorAnimation { easing.type: Easing.InOutSine; from: "#1c56f3"; to: "white"; duration: 1000; }
-            ColorAnimation { easing.type: Easing.InOutSine; to: "#1c56f3"; from: "white"; duration: 1000 }
-            loops: Animation.Infinite
-        }
-    }
-
     ListView {
         enabled: !btModel.isConnected
         id: mainList
         width: top.width
-        anchors.top: busy.bottom
+        anchors.top: top.top
         anchors.bottom: buttonGroup.top
         anchors.bottomMargin: 10
         anchors.topMargin: 10
