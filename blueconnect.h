@@ -54,7 +54,7 @@ private:
 
     QList<QDBusInterface *> devices;
     QDBusInterface *manager;
-    QDBusInterface *connected;
+    int connected;
     QHash<int, QByteArray> roles;
 };
 

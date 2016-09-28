@@ -32,6 +32,8 @@ BlueConnect::BlueConnect(QObject *parent) : QAbstractListModel(parent)
     roles[NameRole] = "name";
     roles[AddressRole] = "address";
 
+    connected = -1;
+
     qDBusRegisterMetaType <InterfacesMap> ();
     qDBusRegisterMetaType <ObjectsMap> ();
 
@@ -161,7 +163,7 @@ bool BlueConnect::checkExistingDev(QDBusInterface *dev)
 
 void BlueConnect::connect (uint index)
 {
-    if (connected != Q_NULLPTR)
+    if (connected >= 0)
         return;
 
     auto dev = devices[index];
@@ -189,25 +191,26 @@ void BlueConnect::connect (uint index)
 
         return;
     }
-    connected = dev;
+    connected = index;
     emit connectionChanged();
 }
 
 void BlueConnect::disconnect ()
 {
-    if (connected == Q_NULLPTR)
+    if(connected < 0 || connected >= devices.length())
         return;
 
-    auto name = connected->property("Name").toString();
+    auto dev = devices[connected];
+    auto name = dev->property("Name").toString();
     std::cout << "Disconnecting " << name << std::endl;
 
-    QDBusReply<void> reply = connected->call("Disconnect");
+    QDBusReply<void> reply = dev->call("Disconnect");
     if (!reply.isValid()) {
         std::cout << "Failed to disconnect: " << reply.error().message() << std::endl;
 
         return;
     }
-    connected = Q_NULLPTR;
+    connected = -1;
     emit connectionChanged();
 }
 
@@ -242,5 +245,5 @@ QHash<int, QByteArray> BlueConnect::roleNames() const
 
 bool BlueConnect::isConnected() const
 {
-    return (connected != Q_NULLPTR);
+    return (connected >= 0);
 }
