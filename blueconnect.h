@@ -21,6 +21,7 @@ public:
     enum RoleNames {
         AddressRole = Qt::UserRole,
         NameRole = Qt::UserRole + 1,
+        SelectedRole = Qt::UserRole + 2,
     };
 
     explicit BlueConnect(QObject *parent=0);

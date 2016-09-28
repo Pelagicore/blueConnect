@@ -31,6 +31,7 @@ BlueConnect::BlueConnect(QObject *parent) : QAbstractListModel(parent)
     // model.name, model.hue, model.saturation, model.brightness
     roles[NameRole] = "name";
     roles[AddressRole] = "address";
+    roles[SelectedRole] = "selected";
 
     connected = -1;
 
@@ -193,6 +194,7 @@ void BlueConnect::connect (uint index)
     }
     connected = index;
     emit connectionChanged();
+    emit dataChanged(createIndex(index - 1, 0), createIndex(index + 1, 0));
 }
 
 void BlueConnect::disconnect ()
@@ -210,8 +212,10 @@ void BlueConnect::disconnect ()
 
         return;
     }
+    auto index = connected;
     connected = -1;
     emit connectionChanged();
+    emit dataChanged(createIndex(index - 1, 0), createIndex(index + 1, 0));
 }
 
 // QAbstractItemModel interface
@@ -233,6 +237,8 @@ QVariant BlueConnect::data(const QModelIndex &index, int role) const
         return devices[row]->property("Name");
     case AddressRole:
         return devices[row]->property("Address");
+    case SelectedRole:
+        return (row == connected);
     default:
         return QVariant();
     }

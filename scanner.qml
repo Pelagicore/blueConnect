@@ -71,6 +71,8 @@ Item {
             width: parent.width
             height: column.height + 10
 
+            color: model.selected ? "grey" : "white"
+
             property bool expended: false;
             clip: true
             Image {
@@ -93,33 +95,18 @@ Item {
                     font.family: "FreeSerif"
                     font.pointSize: 16
                 }
-
             }
             Behavior on height { NumberAnimation { duration: 200} }
 
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    statusText.text = "Current selection: " + name;
                     btModel.connect (index);
                 }
             }
         }
         focus: true
     }
-
-    Row {
-        id: status
-
-        anchors.bottom: buttonGroup.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: 5
-        spacing: 10
-
-        Text {
-            id: statusText
-        }
-   }
 
     Row {
         id: buttonGroup
