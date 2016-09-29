@@ -14,7 +14,7 @@ OTHER_FILES += \
 
 #DEFINES += QMLJSDEBUGGER
 
-target.path = $$[QT_INSTALL_EXAMPLES]/bluetooth/scanner
+target.path = /usr/bin/
 INSTALLS += target
 
 HEADERS += \
