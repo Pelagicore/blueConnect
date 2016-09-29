@@ -9,15 +9,12 @@
  */
 
 import QtQuick 2.0
-import QtBluetooth 5.2
 import QtQuick.Controls 1.4
 
 import org.qt 1.0
 
 Item {
     id: top
-
-    property BluetoothService currentService
 
     BlueConnect {
         id: btModel
