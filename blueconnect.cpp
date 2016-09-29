@@ -54,7 +54,7 @@ BlueConnect::BlueConnect(QObject *parent) : QAbstractListModel(parent)
                            "org.freedesktop.DBus.ObjectManager",
                            bus);
 
-    fetchDevices(manager);
+    fetchObjects(manager);
 
     if (!bus.connect("org.bluez",
                      "/",
@@ -123,7 +123,7 @@ void BlueConnect::onInterfacesRemoved(const QDBusObjectPath &path,
     }
 }
 
-void BlueConnect::fetchDevices(QDBusInterface &manager)
+void BlueConnect::fetchObjects(QDBusInterface &manager)
 {
     QDBusReply<QMap<QDBusObjectPath,QMap<QString,QVariantMap > > > reply;
     reply = manager.call("GetManagedObjects");
@@ -141,6 +141,8 @@ void BlueConnect::fetchDevices(QDBusInterface &manager)
         for (auto j = ifaces.begin(); j != ifaces.end(); ++j) {
             if (j.key() == "org.bluez.Device1")
                 addDevice (i.key());
+            else if (j.key() == "org.bluez.Adapter1")
+                setupAdapter (i.key());
         }
     }
 }
@@ -157,6 +159,22 @@ void BlueConnect::addDevice(QDBusObjectPath path)
         emit beginInsertRows(QModelIndex(), devices.length(), devices.length());
         devices << dev;
         emit endInsertRows();
+    }
+}
+
+void BlueConnect::setupAdapter(QDBusObjectPath path)
+{
+    QDBusInterface adapter("org.bluez",
+                           path.path(),
+                           "org.bluez.Adapter1",
+                           QDBusConnection::systemBus());
+    adapter.setProperty("Powered", true);
+
+    QDBusReply<void> reply = adapter.call("StartDiscovery");
+    if (!reply.isValid()) {
+        std::cout << "Failed to start discovery: " << reply.error().message() << std::endl;
+
+        return;
     }
 }
 
