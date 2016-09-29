@@ -59,12 +59,11 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 private:
-    void fetchDevices(void);
+    void fetchDevices(QDBusInterface &manager);
     void addDevice(QDBusObjectPath path);
     bool checkExistingDev(QDBusInterface *dev);
 
     QList<QDBusInterface *> devices;
-    QDBusInterface *manager;
     int connected;
     QHash<int, QByteArray> roles;
 };
