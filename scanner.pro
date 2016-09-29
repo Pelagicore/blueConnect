@@ -2,7 +2,7 @@ QT = core quick dbus
 SOURCES += qmlscanner.cpp \
     blueconnect.cpp
 
-TARGET = qml_scanner
+TARGET = bluetooth-demo
 TEMPLATE = app
 
 RESOURCES += \
