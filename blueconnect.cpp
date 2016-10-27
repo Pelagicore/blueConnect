@@ -10,6 +10,7 @@
 
 #include "blueconnect.h"
 #include "iostream"
+#include <unistd.h>
 
 std::ostream& operator<<(std::ostream& str, const QString& string) {
     return str << string.toStdString();
@@ -91,6 +92,15 @@ void BlueConnect::onInterfacesAdded(const QDBusObjectPath &path,
             addDevice (path);
 
             break;
+        } else if (i.key() == "org.bluez.MediaPlayer1") {
+            std::cout << "'org.bluez.MediaPlayer1' interface added at "
+                      << path.path()
+                      << std::endl;
+
+            BluePlayer *mediaPlayer = new BluePlayer(QDBusObjectPath(path.path()), NULL);
+            emit mediaPlayerAdded(mediaPlayer);
+
+            break;
         }
     }
 }
@@ -138,6 +148,7 @@ void BlueConnect::fetchObjects(QDBusInterface &manager)
     for (auto i = objects.begin(); i != objects.end(); ++i) {
         auto ifaces = i.value();
 
+        std::cout << i.key().path() << std::endl;
         for (auto j = ifaces.begin(); j != ifaces.end(); ++j) {
             if (j.key() == "org.bluez.Device1")
                 addDevice (i.key());
@@ -190,10 +201,10 @@ bool BlueConnect::checkExistingDev(QDBusInterface *dev)
     return false;
 }
 
-void BlueConnect::connect (uint index)
+BluePlayer * BlueConnect::connect (uint index)
 {
     if (connected >= 0)
-        return;
+        return Q_NULLPTR;
 
     auto dev = devices[index];
     auto address = dev->property("Address").toString();
@@ -201,7 +212,7 @@ void BlueConnect::connect (uint index)
 
     auto uuid = getAudioSourceUUID(dev);
     if (uuid == Q_NULLPTR)
-        return;
+        return Q_NULLPTR;
 
     if (dev->property("Paired").toBool()) {
         std::cout << "Device already paired" << std::endl;
@@ -210,7 +221,7 @@ void BlueConnect::connect (uint index)
         if (!reply.isValid()) {
             std::cout << "Failed to pair: " << reply.error().message() << std::endl;
 
-            return;
+            return Q_NULLPTR;
         }
     }
 
@@ -218,11 +229,13 @@ void BlueConnect::connect (uint index)
     if (!reply.isValid()) {
         std::cout << "Failed to connect: " << reply.error().message() << std::endl;
 
-        return;
+        return Q_NULLPTR;
     }
     connected = index;
     emit connectionChanged();
     emit dataChanged(createIndex(index - 1, 0), createIndex(index + 1, 0));
+
+    return NULL;
 }
 
 void BlueConnect::disconnect ()

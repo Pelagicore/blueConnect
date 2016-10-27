@@ -16,77 +16,41 @@ import org.qt 1.0
 Item {
     id: top
 
+    property BluePlayer btPlayer
+
     BlueConnect {
         id: btModel
+
+        onMediaPlayerAdded: {
+            top.btPlayer = mediaPlayer
+        }
     }
 
-    ListView {
-        enabled: !btModel.isConnected
-        id: mainList
+    DeviceList {
+        id: deviceList
+        btModel: btModel
+
         width: top.width
         anchors.top: top.top
-        anchors.bottom: buttonGroup.top
-        anchors.bottomMargin: 10
-        anchors.topMargin: 10
-        clip: true
-
-        model: btModel
-
-        delegate: Rectangle {
-            id: btDelegate
-            width: parent.width
-            height: column.height + 10
-
-            color: model.selected ? "grey" : "white"
-
-            property bool expended: false;
-            clip: true
-            Image {
-                id: bticon
-                source: "qrc:/default.png";
-                width: bttext.height;
-                height: bttext.height;
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.margins: 5
-            }
-
-            Column {
-                id: column
-                anchors.left: bticon.right
-                anchors.leftMargin: 5
-                Text {
-                    id: bttext
-                    text: model.name
-                    font.family: "FreeSerif"
-                    font.pointSize: 16
-                }
-            }
-            Behavior on height { NumberAnimation { duration: 200} }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    btModel.connect (index);
-                }
-            }
-        }
-        focus: true
+        anchors.bottom: playerMetadata.top
     }
 
-    Row {
-        id: buttonGroup
+    PlayerMetadata {
+        id: playerMetadata
+        btPlayer: top.btPlayer
+
+        width: parent.width
+        anchors.bottom: playerControls.top
+        height: 50
+    }
+
+    PlayerControls {
+        id: playerControls
+        btPlayer: top.btPlayer
 
         anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: 5
-        spacing: 10
-
-        Button {
-            text: "Disonnect"
-            enabled: btModel.isConnected
-            onClicked: btModel.disconnect()
-        }
-   }
+        width: parent.width
+        height: 75
+    }
 
 }

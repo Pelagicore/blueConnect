@@ -43,11 +43,13 @@
 #include <QtCore>
 #include <QtQml>
 #include "blueconnect.h"
+#include "blueplayer.h"
 
 int main(int argc, char *argv[])
 {
     //QLoggingCategory::setFilterRules(QStringLiteral("qt.bluetooth* = true"));
     QGuiApplication application(argc, argv);
+    qmlRegisterType<BluePlayer>("org.qt", 1, 0, "BluePlayer");
     qmlRegisterType<BlueConnect>("org.qt", 1, 0, "BlueConnect");
 
     const QString mainQmlApp(QStringLiteral("qrc:/scanner.qml"));
@@ -60,7 +62,7 @@ int main(int argc, char *argv[])
     // Qt.quit() called in embedded .qml by default only emits
     // quit() signal, so do this (optionally use Qt.exit()).
     QObject::connect(view.engine(), SIGNAL(quit()), qApp, SLOT(quit()));
-    view.setGeometry(QRect(100, 100, 360, 640));
+    view.setGeometry(QRect(100, 100, 640, 640));
     view.show();
     return application.exec();
 }

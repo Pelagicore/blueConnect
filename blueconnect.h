@@ -15,6 +15,7 @@
 #include <QtCore>
 #include <QtGui>
 #include <QtDBus/QtDBus>
+#include "blueplayer.h"
 
 typedef QMap<QString,QVariantMap> InterfacesMap;
 typedef QList<QString> InterfacesList;
@@ -39,7 +40,7 @@ public:
 
     Q_PROPERTY(bool isConnected READ isConnected NOTIFY connectionChanged)
 
-    Q_INVOKABLE void connect (uint index);
+    Q_INVOKABLE BluePlayer * connect (uint index);
     Q_INVOKABLE void disconnect ();
     bool isConnected() const;
 
@@ -53,6 +54,7 @@ protected slots:
 
 signals:
     void connectionChanged();
+    void mediaPlayerAdded(BluePlayer *mediaPlayer);
 
 protected:
     // return the roles mapping to be used by QML
@@ -63,6 +65,7 @@ private:
     void setupAdapter(QDBusObjectPath path);
     void addDevice(QDBusObjectPath path);
     bool checkExistingDev(QDBusInterface *dev);
+    BluePlayer *getPlayer();
 
     QList<QDBusInterface *> devices;
     int connected;

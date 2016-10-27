@@ -2,5 +2,8 @@
     <qresource prefix="/">
         <file>scanner.qml</file>
         <file>default.png</file>
+        <file>PlayerControls.qml</file>
+        <file>PlayerMetadata.qml</file>
+        <file>DeviceList.qml</file>
     </qresource>
 </RCC>
