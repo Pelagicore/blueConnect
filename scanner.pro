@@ -1,4 +1,5 @@
 QT = core quick dbus
+CONFIG += c++11
 SOURCES += qmlscanner.cpp \
     blueconnect.cpp
 
