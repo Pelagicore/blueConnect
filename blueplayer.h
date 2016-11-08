@@ -66,17 +66,8 @@ private slots:
 
 private:
     QDBusInterface *m_mediaPlayer;
-    QString m_status;
-    QString m_title;
-    int m_duration;
-    QString m_album;
-    int m_trackNumber;
-    QString m_artist;
-    int m_numberOfTracks;
-    QString m_genre;
 
     void setStatus(const QString &status);
-
     void setTitle(const QString &title);
     void setDuration(int duration);
     void setAlbum(const QString &album);
