@@ -23,6 +23,8 @@ Item {
 
         onMediaPlayerAdded: {
             top.btPlayer = mediaPlayer
+            playerControls.btPlayer = mediaPlayer
+            playerMetadata.btPlayer = mediaPlayer
         }
     }
 
@@ -37,7 +39,6 @@ Item {
 
     PlayerMetadata {
         id: playerMetadata
-        btPlayer: top.btPlayer
 
         width: parent.width
         anchors.bottom: playerControls.top
@@ -46,7 +47,6 @@ Item {
 
     PlayerControls {
         id: playerControls
-        btPlayer: top.btPlayer
 
         anchors.bottom: parent.bottom
         width: parent.width
