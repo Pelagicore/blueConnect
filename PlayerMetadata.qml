@@ -39,6 +39,7 @@ Item {
         anchors.left: parent.left
         value: 0
         anchors.top: parent.top
+        enabled: false
     }
 
     Label {
