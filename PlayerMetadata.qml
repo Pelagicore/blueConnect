@@ -22,6 +22,25 @@ Item {
         return Qt.formatDateTime(date, "m:ss")
     }
 
+    Timer {
+        id: positionTimer
+        interval: 1000;
+        running: btPlayer? btPlayer.status == "playing" : false
+        repeat: true
+        onTriggered: {
+            positionSlider.maximumValue = btPlayer.duration
+            positionSlider.value = btPlayer.position
+        }
+    }
+
+    Slider {
+        id: positionSlider
+        anchors.right: parent.right
+        anchors.left: parent.left
+        value: 0
+        anchors.top: parent.top
+    }
+
     Label {
         id: title
         text: btPlayer? "Title: " + btPlayer.title: ""
