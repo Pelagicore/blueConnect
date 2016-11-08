@@ -33,6 +33,9 @@ public:
     Q_PROPERTY(QString artist READ getArtist NOTIFY artistChanged)
     Q_PROPERTY(int numberOfTracks READ getNumberOfTracks NOTIFY numberOfTracksChanged)
     Q_PROPERTY(QString genre READ getGenre NOTIFY genreChanged)
+    Q_PROPERTY(QString shuffle READ getShuffle NOTIFY shuffleChanged)
+    Q_PROPERTY(QString repeat READ getRepeat NOTIFY repeatChanged)
+    Q_PROPERTY(int position READ getPosition NOTIFY positionChanged)
 
     Q_PROPERTY(QString status READ getStatus NOTIFY statusChanged)
 
