@@ -42,7 +42,7 @@ Item {
 
         width: parent.width
         anchors.bottom: playerControls.top
-        height: 50
+        height: 75
     }
 
     PlayerControls {

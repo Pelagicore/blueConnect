@@ -44,42 +44,50 @@ Item {
     Label {
         id: title
         text: btPlayer? "Title: " + btPlayer.title: ""
-        anchors.top: parent.top
+        anchors.top: positionSlider.bottom
         anchors.left: parent.left
+        elide: Text.ElideRight
+        width: parent.width * 0.75
+        anchors.leftMargin: 20
     }
 
     Label {
         id: album
         text: btPlayer ? "Album: " + btPlayer.album : ""
         anchors.top: title.bottom
-        anchors.left: parent.left
+        anchors.left: title.left
+        elide: Text.ElideRight
+        width: parent.width * 0.75
     }
 
     Label {
         id: artist
         text: btPlayer? "Artist: " + btPlayer.artist : ""
         anchors.top: album.bottom
-        anchors.left: parent.left
+        anchors.left: title.left
+        elide: Text.ElideRight
+        width: parent.width * 0.75
     }
 
     Label {
         id: duration
         text: btPlayer? "Duration: " + millisToDate(btPlayer.duration) : ""
-        anchors.top: parent.top
+        anchors.top: positionSlider.bottom
         anchors.right: parent.right
+        anchors.rightMargin: 20
     }
 
     Label {
         id: genre
         text: btPlayer? "Genre: " + btPlayer.genre : ""
         anchors.top: duration.bottom
-        anchors.right: parent.right
+        anchors.left: duration.left
     }
 
     Label {
         id: status
         text: btPlayer? "Status: " + btPlayer.status : ""
         anchors.top: genre.bottom
-        anchors.right: parent.right
+        anchors.left: duration.left
     }
 }
