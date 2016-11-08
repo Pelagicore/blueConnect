@@ -165,7 +165,8 @@ QString BluePlayer::getRepeat() {
 }
 
 int BluePlayer::getPosition() {
-    return getCachedIntProperty("Position");
+    /* This property is not updated automatically */
+    return m_mediaPlayer->property("Position").toInt();
 }
 
 void BluePlayer::onPropertiesChanged(const QString path,
