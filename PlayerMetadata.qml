@@ -56,4 +56,11 @@ Item {
         anchors.top: duration.bottom
         anchors.right: parent.right
     }
+
+    Label {
+        id: status
+        text: btPlayer? "Status: " + btPlayer.status : ""
+        anchors.top: genre.bottom
+        anchors.right: parent.right
+    }
 }
