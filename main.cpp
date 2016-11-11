@@ -52,10 +52,8 @@ int main(int argc, char *argv[])
     qmlRegisterType<BluePlayer>("org.qt", 1, 0, "BluePlayer");
     qmlRegisterType<BlueConnect>("org.qt", 1, 0, "BlueConnect");
 
-    const QString mainQmlApp(QStringLiteral("qrc:/scanner.qml"));
+    const QString mainQmlApp(QStringLiteral("qrc:/main.qml"));
     QQuickView view;
-    //BlueConnect blue(NULL);
-    //view.rootContext()->setContextProperty("blue", &blue);
 
     view.setSource(QUrl(mainQmlApp));
     view.setResizeMode(QQuickView::SizeRootObjectToView);

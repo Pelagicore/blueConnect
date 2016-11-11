@@ -1,8 +1,9 @@
 QT = core quick dbus
 CONFIG += c++11
-SOURCES += qmlscanner.cpp \
+SOURCES += \
     blueconnect.cpp \
-    blueplayer.cpp
+    blueplayer.cpp \
+    main.cpp
 
 TARGET = bluetooth-demo
 TEMPLATE = app
@@ -11,7 +12,6 @@ RESOURCES += \
     scanner.qrc
 
 OTHER_FILES += \
-    scanner.qml \
     default.png
 
 #DEFINES += QMLJSDEBUGGER
@@ -28,4 +28,6 @@ QMAKE_CXXFLAGS += -std=c++11
 DISTFILES += \
     PlayerControls.qml \
     PlayerMetadata.qml \
-    DeviceList.qml
+    DeviceList.qml \
+    main.qml \
+    PlayerTab.qml

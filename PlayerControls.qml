@@ -14,8 +14,6 @@ import QtQuick.Controls 1.4
 import org.qt 1.0
 
 Item {
-    property BluePlayer btPlayer
-
     Row {
         id: playerRow
 
@@ -75,9 +73,9 @@ Item {
 
         Button {
             text: "Disonnect"
-            enabled: btModel.isConnected
+            enabled: blueConnect.isConnected
             onClicked: {
-                btModel.disconnect()
+                blueConnect.disconnect()
                 btPlayer = null
             }
         }

@@ -14,20 +14,18 @@ import QtQuick.Controls 1.4
 import org.qt 1.0
 
 ListView {
-    property BlueConnect btModel
-
-    enabled: !btModel.isConnected
+    enabled: !blueConnect.isConnected
     id: deviceList
     clip: true
 
-    model: btModel
+    model: blueConnect
 
     delegate: Rectangle {
         id: btDelegate
         width: parent.width
         height: column.height + 10
         
-        color: model.selected ? "grey" : "white"
+        color: model.selected ? "grey" : "transparent"
         
         property bool expended: false;
         
@@ -46,6 +44,7 @@ ListView {
             id: column
             anchors.left: bticon.right
             anchors.leftMargin: 5
+            anchors.verticalCenter: bticon.verticalCenter
             Text {
                 id: bttext
                 text: model.name
@@ -58,7 +57,7 @@ ListView {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                btModel.connect (index);
+                blueConnect.connect (index);
             }
         }
     }

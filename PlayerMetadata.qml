@@ -15,8 +15,6 @@ import QtQml 2.2
 import org.qt 1.0
 
 Item {
-    property BluePlayer btPlayer
-
     function millisToDate(millis) {
         var date = new Date(millis);
         return Qt.formatDateTime(date, "m:ss")
