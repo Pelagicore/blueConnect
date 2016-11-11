@@ -3,7 +3,9 @@ CONFIG += c++11
 SOURCES += \
     blueconnect.cpp \
     blueplayer.cpp \
-    main.cpp
+    main.cpp \
+    bluephonebook.cpp \
+    contact.cpp
 
 TARGET = bluetooth-demo
 TEMPLATE = app
@@ -21,7 +23,10 @@ INSTALLS += target
 
 HEADERS += \
     blueconnect.h \
-    blueplayer.h
+    blueplayer.h \
+    bluephonebook.h \
+    customtypes.h \
+    contact.h
 
 QMAKE_CXXFLAGS += -std=c++11
 
@@ -30,4 +35,6 @@ DISTFILES += \
     PlayerMetadata.qml \
     DeviceList.qml \
     main.qml \
-    PlayerTab.qml
+    PlayerTab.qml \
+    PhoneBookTab.qml \
+    PhonebookTab.qml

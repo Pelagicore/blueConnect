@@ -16,13 +16,9 @@
 #include <QtGui>
 #include <QtDBus/QtDBus>
 #include "blueplayer.h"
-
-typedef QMap<QString,QVariantMap> InterfacesMap;
-typedef QList<QString> InterfacesList;
-typedef QMap<QDBusObjectPath,InterfacesMap> ObjectsMap;
-
-Q_DECLARE_METATYPE(InterfacesMap)
-Q_DECLARE_METATYPE(ObjectsMap)
+#include "bluephonebook.h"
+#include "contact.h"
+#include "customtypes.h"
 
 class BlueConnect : public QAbstractListModel
 {
@@ -55,6 +51,7 @@ protected slots:
 signals:
     void connectionChanged();
     void mediaPlayerAdded(BluePlayer *mediaPlayer);
+    void phoneBookAdded(BluePhoneBook *phoneBook);
 
 protected:
     // return the roles mapping to be used by QML
@@ -65,11 +62,14 @@ private:
     void setupAdapter(QDBusObjectPath path);
     void addDevice(QDBusObjectPath path);
     bool checkExistingDev(QDBusInterface *dev);
+    void requestPhoneBookAccess(const QString &device);
+    void requestPhoneBook(const QString &pbPath);
     BluePlayer *getPlayer();
 
     QList<QDBusInterface *> devices;
     int connected;
     QHash<int, QByteArray> roles;
+    BluePhoneBook *m_phoneBook;
 };
 
 #endif // BLUECONNECT_H

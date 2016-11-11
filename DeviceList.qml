@@ -11,7 +11,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
 
-import org.qt 1.0
+import com.pelagicore.bluetooth 1.0
 
 ListView {
     enabled: !blueConnect.isConnected
@@ -26,7 +26,7 @@ ListView {
         height: column.height + 10
         
         color: model.selected ? "grey" : "transparent"
-        
+
         property bool expended: false;
         
         clip: true

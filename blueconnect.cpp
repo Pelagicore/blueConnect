@@ -48,16 +48,18 @@ BlueConnect::BlueConnect(QObject *parent) : QAbstractListModel(parent)
 
     qDBusRegisterMetaType <InterfacesMap> ();
     qDBusRegisterMetaType <ObjectsMap> ();
+    qDBusRegisterMetaType <Contact> ();
+    qDBusRegisterMetaType <QList<Contact> > ();
 
-    auto bus = QDBusConnection::systemBus();
+    auto systemBus = QDBusConnection::systemBus();
     QDBusInterface manager("org.bluez",
                            "/",
                            "org.freedesktop.DBus.ObjectManager",
-                           bus);
+                           systemBus);
 
     fetchObjects(manager);
 
-    if (!bus.connect("org.bluez",
+    if (!systemBus.connect("org.bluez",
                      "/",
                      "org.freedesktop.DBus.ObjectManager",
                      "InterfacesAdded",
@@ -66,7 +68,7 @@ BlueConnect::BlueConnect(QObject *parent) : QAbstractListModel(parent)
         qWarning() << "Failed to connect InterfacesAdded signal";
     }
 
-    if (!bus.connect("org.bluez",
+    if (!systemBus.connect("org.bluez",
                      "/",
                      "org.freedesktop.DBus.ObjectManager",
                      "InterfacesRemoved",
@@ -90,8 +92,6 @@ void BlueConnect::onInterfacesAdded(const QDBusObjectPath &path,
                       << std::endl;
 
             addDevice (path);
-
-            break;
         } else if (i.key() == "org.bluez.MediaPlayer1") {
             std::cout << "'org.bluez.MediaPlayer1' interface added at "
                       << path.path()
@@ -99,8 +99,6 @@ void BlueConnect::onInterfacesAdded(const QDBusObjectPath &path,
 
             BluePlayer *mediaPlayer = new BluePlayer(QDBusObjectPath(path.path()), NULL);
             emit mediaPlayerAdded(mediaPlayer);
-
-            break;
         }
     }
 }
@@ -224,6 +222,9 @@ BluePlayer * BlueConnect::connect (uint index)
             return Q_NULLPTR;
         }
     }
+
+    m_phoneBook = new BluePhoneBook(address);
+    emit phoneBookAdded(m_phoneBook);
 
     QDBusReply<void> reply = dev->call("ConnectProfile", uuid);
     if (!reply.isValid()) {

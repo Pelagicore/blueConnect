@@ -11,18 +11,24 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
 
-import org.qt 1.0
+import com.pelagicore.bluetooth 1.0
 
 Item {
     id: main
 
     property BluePlayer btPlayer
+    property BluePhoneBook btPhoneBook
 
     BlueConnect {
         id: blueConnect
 
         onMediaPlayerAdded: {
             main.btPlayer = mediaPlayer
+        }
+
+        onPhoneBookAdded: {
+            console.log("Phone book added")
+            main.btPhoneBook = phoneBook
         }
     }
 
@@ -37,7 +43,7 @@ Item {
 
         Tab {
             title: "Phonebook"
-            Phonebook {}
+            PhonebookTab {}
         }
     }
 

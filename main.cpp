@@ -42,15 +42,18 @@
 #include <QtQuick/QQuickView>
 #include <QtCore>
 #include <QtQml>
+
 #include "blueconnect.h"
 #include "blueplayer.h"
+#include "bluephonebook.h"
 
 int main(int argc, char *argv[])
 {
     //QLoggingCategory::setFilterRules(QStringLiteral("qt.bluetooth* = true"));
     QGuiApplication application(argc, argv);
-    qmlRegisterType<BluePlayer>("org.qt", 1, 0, "BluePlayer");
-    qmlRegisterType<BlueConnect>("org.qt", 1, 0, "BlueConnect");
+    qmlRegisterType<BluePlayer>("com.pelagicore.bluetooth", 1, 0, "BluePlayer");
+    qmlRegisterType<BlueConnect>("com.pelagicore.bluetooth", 1, 0, "BlueConnect");
+    qmlRegisterType<BluePhoneBook>("com.pelagicore.bluetooth", 1, 0, "BluePhoneBook");
 
     const QString mainQmlApp(QStringLiteral("qrc:/main.qml"));
     QQuickView view;

@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
 
-import org.qt 1.0
+import com.pelagicore.bluetooth 1.0
 
 Item {
     id: playerTab

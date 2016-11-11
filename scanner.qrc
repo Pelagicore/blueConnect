@@ -6,6 +6,6 @@
         <file>DeviceList.qml</file>
         <file>main.qml</file>
         <file>PlayerTab.qml</file>
-        <file>Phonebook.qml</file>
+        <file>PhonebookTab.qml</file>
     </qresource>
 </RCC>
