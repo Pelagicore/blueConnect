@@ -14,7 +14,6 @@ import QtQuick.Controls 1.4
 import com.pelagicore.bluetooth 1.0
 
 ListView {
-    enabled: !blueConnect.isConnected
     id: deviceList
     clip: true
 
