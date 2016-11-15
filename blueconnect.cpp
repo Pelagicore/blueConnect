@@ -43,6 +43,7 @@ BlueConnect::BlueConnect(QObject *parent) : QAbstractListModel(parent)
     roles[NameRole] = "name";
     roles[AddressRole] = "address";
     roles[SelectedRole] = "selected";
+    roles[PairedRole] = "paired";
 
     connected = -1;
 
@@ -259,6 +260,27 @@ void BlueConnect::disconnect ()
     emit connectionChanged();
     emit dataChanged(createIndex(index - 1, 0), createIndex(index + 1, 0));
 }
+void BlueConnect::unpair (uint index)
+{
+    auto dev = devices[index];
+    auto separator = dev->path().lastIndexOf("/");
+    auto path = dev->path();
+    path.chop(dev->path().length() - separator);
+    QDBusObjectPath devicePath(path);
+
+    auto adapter = new QDBusInterface ("org.bluez",
+                                       devicePath.path(),
+                                       "org.bluez.Adapter1",
+                                       QDBusConnection::systemBus());
+
+    QDBusReply<void> reply = adapter->call("RemoveDevice",
+                                           QVariant::fromValue(QDBusObjectPath(dev->path())));
+    if (!reply.isValid()) {
+        qWarning() << "Failed to remove device '"<< dev->path() << "': " << reply.error();
+    }
+
+    connected = -1;
+}
 
 // QAbstractItemModel interface
 int BlueConnect::rowCount(const QModelIndex &parent) const
@@ -279,6 +301,8 @@ QVariant BlueConnect::data(const QModelIndex &index, int role) const
         return devices[row]->property("Name");
     case AddressRole:
         return devices[row]->property("Address");
+    case PairedRole:
+        return devices[row]->property("Paired");
     case SelectedRole:
         return (row == connected);
     default:

@@ -29,6 +29,7 @@ public:
         AddressRole = Qt::UserRole,
         NameRole = Qt::UserRole + 1,
         SelectedRole = Qt::UserRole + 2,
+        PairedRole = Qt::UserRole + 3,
     };
 
     explicit BlueConnect(QObject *parent=0);
@@ -36,8 +37,15 @@ public:
 
     Q_PROPERTY(bool isConnected READ isConnected NOTIFY connectionChanged)
 
+    /* Connect to a device */
     Q_INVOKABLE BluePlayer * connect (uint index);
+
+    /* Disconnect any connected profiles from a device */
     Q_INVOKABLE void disconnect ();
+
+    /* Remove pairing from device */
+    Q_INVOKABLE void unpair (uint index);
+
     bool isConnected() const;
 
     // QAbstractItemModel interface

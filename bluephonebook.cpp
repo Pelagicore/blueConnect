@@ -112,7 +112,7 @@ void BluePhoneBook::requestPhoneBook(const QString &pbPath)
     }
 
     beginResetModel();
-    m_contacts = reply.value();
+    m_contacts = reply2.value();
     endResetModel();
 }
 
