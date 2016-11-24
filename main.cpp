@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<BluePlayer>("com.pelagicore.bluetooth", 1, 0, "BluePlayer");
     qmlRegisterType<BlueConnect>("com.pelagicore.bluetooth", 1, 0, "BlueConnect");
     qmlRegisterType<BluePhoneBook>("com.pelagicore.bluetooth", 1, 0, "BluePhoneBook");
+    qmlRegisterType<BlueHandsfree>("com.pelagicore.bluetooth", 1, 0, "BlueHandsfree");
 
     const QString mainQmlApp(QStringLiteral("qrc:/main.qml"));
     QQuickView view;

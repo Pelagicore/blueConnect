@@ -16,7 +16,11 @@ std::ostream& operator<<(std::ostream& str, const QString& string) {
     return str << string.toStdString();
 }
 
-QString getAudioSourceUUID(QDBusInterface *dev)
+#define A2DP_PREFIX 0x110A
+#define HFP_PREFIX 0x111F
+#define HFP_PREFIX2 0x111E
+
+QString getProvileUUID(QDBusInterface *dev, int prefix)
 {
     auto uuids = dev->property("UUIDs").toStringList();
 
@@ -29,7 +33,7 @@ QString getAudioSourceUUID(QDBusInterface *dev)
         }
 
         uint profile = parts.at(0).toUInt(Q_NULLPTR, 16);
-        if (profile == 0x110A)
+        if (profile == prefix)
            return str;
     }
 
@@ -51,6 +55,8 @@ BlueConnect::BlueConnect(QObject *parent) : QAbstractListModel(parent)
     qDBusRegisterMetaType <ObjectsMap> ();
     qDBusRegisterMetaType <Contact> ();
     qDBusRegisterMetaType <QList<Contact> > ();
+    qDBusRegisterMetaType <Modem> ();
+    qDBusRegisterMetaType <QList<Modem> > ();
 
     auto systemBus = QDBusConnection::systemBus();
     QDBusInterface manager("org.bluez",
@@ -164,7 +170,7 @@ void BlueConnect::addDevice(QDBusObjectPath path)
                               path.path(),
                               "org.bluez.Device1",
                               QDBusConnection::systemBus());
-    auto uuid = getAudioSourceUUID(dev);
+    auto uuid = getProvileUUID(dev, A2DP_PREFIX);
     if (uuid != Q_NULLPTR && !checkExistingDev(dev)) {
         emit beginInsertRows(QModelIndex(), devices.length(), devices.length());
         devices << dev;
@@ -209,9 +215,18 @@ BluePlayer * BlueConnect::connect (uint index)
     auto address = dev->property("Address").toString();
     std::cout << "will connect to:" << address << std::endl;
 
-    auto uuid = getAudioSourceUUID(dev);
-    if (uuid == Q_NULLPTR)
+    auto a2dp_uuid = getProvileUUID(dev, A2DP_PREFIX);
+    auto hfp_uuid = getProvileUUID(dev, HFP_PREFIX);
+    auto hfp_uuid2 = getProvileUUID(dev, HFP_PREFIX2);
+    if (a2dp_uuid == Q_NULLPTR) {
+        qWarning() << "A2DP UUID not found";
         return Q_NULLPTR;
+    }
+
+    if (hfp_uuid == Q_NULLPTR) {
+        qWarning() << "HFP UUID not found";
+        return Q_NULLPTR;
+    }
 
     if (dev->property("Paired").toBool()) {
         std::cout << "Device already paired" << std::endl;
@@ -224,15 +239,38 @@ BluePlayer * BlueConnect::connect (uint index)
         }
     }
 
+    std::cout << "Trusting device: " << address << std::endl;
+    dev->setProperty("Trusted", true);
+
     m_phoneBook = new BluePhoneBook(address);
     emit phoneBookAdded(m_phoneBook);
 
-    QDBusReply<void> reply = dev->call("ConnectProfile", uuid);
+    m_handsfree = new BlueHandsfree();
+    emit handsfreeAdded(m_handsfree);
+
+    /* Connect the audio profile explicitly */
+    QDBusReply<void> reply = dev->call("ConnectProfile", a2dp_uuid);
     if (!reply.isValid()) {
-        std::cout << "Failed to connect: " << reply.error().message() << std::endl;
+        std::cout << "Failed to connect A2DP: " << reply.error().message() << std::endl;
 
         return Q_NULLPTR;
     }
+
+    reply = dev->call("ConnectProfile", hfp_uuid);
+    if (!reply.isValid()) {
+        std::cout << "Failed to connect HFP: " << reply.error().message() << std::endl;
+    }
+
+    reply = dev->call("ConnectProfile", hfp_uuid2);
+    if (!reply.isValid()) {
+        std::cout << "Failed to connect secondary HFP profile: " << reply.error().message() << std::endl;
+    }
+
+    reply = dev->call("Connect");
+    if (!reply.isValid()) {
+        std::cout << "Failed to connect extra profiles: " << reply.error().message() << std::endl;
+    }
+
     connected = index;
     emit connectionChanged();
     emit dataChanged(createIndex(index - 1, 0), createIndex(index + 1, 0));

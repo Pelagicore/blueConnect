@@ -5,7 +5,9 @@ SOURCES += \
     blueplayer.cpp \
     main.cpp \
     bluephonebook.cpp \
-    contact.cpp
+    contact.cpp \
+    bluehandsfree.cpp \
+    modem.cpp
 
 TARGET = bluetooth-demo
 TEMPLATE = app
@@ -26,7 +28,9 @@ HEADERS += \
     blueplayer.h \
     bluephonebook.h \
     customtypes.h \
-    contact.h
+    contact.h \
+    bluehandsfree.h \
+    modem.h
 
 QMAKE_CXXFLAGS += -std=c++11
 

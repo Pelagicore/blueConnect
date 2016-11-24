@@ -13,6 +13,8 @@
 
 #include <QObject>
 #include <QDBusObjectPath>
+#include <contact.h>
+#include <modem.h>
 
 typedef QMap<QString,QVariantMap> InterfacesMap;
 typedef QList<QString> InterfacesList;
@@ -21,6 +23,8 @@ typedef QMap<QDBusObjectPath,InterfacesMap> ObjectsMap;
 Q_DECLARE_METATYPE(InterfacesMap)
 Q_DECLARE_METATYPE(ObjectsMap)
 Q_DECLARE_METATYPE(Contact)
+Q_DECLARE_METATYPE(Modem)
+Q_DECLARE_METATYPE(QList<Modem>)
 
 
 #endif // CUSTOMTYPES_H

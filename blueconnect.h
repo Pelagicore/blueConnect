@@ -17,6 +17,7 @@
 #include <QtDBus/QtDBus>
 #include "blueplayer.h"
 #include "bluephonebook.h"
+#include "bluehandsfree.h"
 #include "contact.h"
 #include "customtypes.h"
 
@@ -60,6 +61,7 @@ signals:
     void connectionChanged();
     void mediaPlayerAdded(BluePlayer *mediaPlayer);
     void phoneBookAdded(BluePhoneBook *phoneBook);
+    void handsfreeAdded(BlueHandsfree *handsfree);
 
 protected:
     // return the roles mapping to be used by QML
@@ -78,6 +80,7 @@ private:
     int connected;
     QHash<int, QByteArray> roles;
     BluePhoneBook *m_phoneBook;
+    BlueHandsfree *m_handsfree;
 };
 
 #endif // BLUECONNECT_H

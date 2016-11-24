@@ -18,6 +18,7 @@ Item {
 
     property BluePlayer btPlayer
     property BluePhoneBook btPhoneBook
+    property BlueHandsfree btHandsfree
 
     BlueConnect {
         id: blueConnect
@@ -29,6 +30,11 @@ Item {
         onPhoneBookAdded: {
             console.log("Phone book added")
             main.btPhoneBook = phoneBook
+        }
+
+        onHandsfreeAdded: {
+            console.log("Handsfree added")
+            main.btHandsfree = handsfree
         }
     }
 
@@ -44,6 +50,11 @@ Item {
         Tab {
             title: "Phonebook"
             PhonebookTab {}
+        }
+
+        Tab {
+            title: "Handsfree & dialer"
+            HandsfreeTab {}
         }
     }
 

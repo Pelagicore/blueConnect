@@ -7,5 +7,7 @@
         <file>main.qml</file>
         <file>PlayerTab.qml</file>
         <file>PhonebookTab.qml</file>
+        <file>HandsfreeTab.qml</file>
+        <file>Dialer.qml</file>
     </qresource>
 </RCC>
