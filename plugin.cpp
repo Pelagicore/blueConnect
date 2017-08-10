@@ -1,3 +1,9 @@
+/*
+ * Copyright (C) 2016, Pelagicore AB.
+ * Author: Jonatan Pålsson <jonatan.palsson@pelagicore.com>
+ * SPDX-License-Identify: MPL-2.0
+ */
+
 #include "plugin.h"
 #include "blueconnect.h"
 #include "bluehandsfree.h"
