@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>default.png</file>
+        <file>PlayerControls.qml</file>
+        <file>PlayerMetadata.qml</file>
+        <file>DeviceList.qml</file>
+        <file>main.qml</file>
+        <file>PlayerTab.qml</file>
+        <file>PhonebookTab.qml</file>
+        <file>HandsfreeTab.qml</file>
+        <file>Dialer.qml</file>
+    </qresource>
+</RCC>
