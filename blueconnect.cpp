@@ -345,22 +345,24 @@ QVariant BlueConnect::data(const QModelIndex &index, int role) const
     if(row < 0 || row >= devices.length())
         return QVariant();
 
-    auto *device = devices[row];
+    QDBusInterface *device = devices[row];
     switch (role) {
     case NameRole: {
         QString name = device->property("Name").toString();
         QString address = device->property("Address").toString();
 
-        if (name.size() == 0) {
+        if (name.isEmpty()) {
             return address;
         }
         return QString("%1 (%2)").arg(name, address);
     }
     case AddressRole: {
-        return device->property("Address");
+        QVariant var = device->property("Address");
+        return var.toString();
     }
     case PairedRole: {
-        return device->property("Paired");
+        QVariant var = device->property("Paired");
+        return var.toBool();
     }
     case SelectedRole: {
         return (row == connected);
