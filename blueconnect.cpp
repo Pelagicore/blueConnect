@@ -174,8 +174,7 @@ void BlueConnect::addDevice(QDBusObjectPath path)
                               path.path(),
                               "org.bluez.Device1",
                               QDBusConnection::systemBus());
-    auto uuid = getProvileUUID(dev, A2DP_PREFIX);
-    if (uuid != Q_NULLPTR && !checkExistingDev(dev)) {
+    if (!checkExistingDev(dev)) {
         emit beginInsertRows(QModelIndex(), devices.length(), devices.length());
         devices << dev;
         emit endInsertRows();
@@ -345,17 +344,29 @@ QVariant BlueConnect::data(const QModelIndex &index, int role) const
     if(row < 0 || row >= devices.length())
         return QVariant();
 
+    auto *device = devices[row];
     switch (role) {
-    case NameRole:
-        return devices[row]->property("Name");
-    case AddressRole:
-        return devices[row]->property("Address");
-    case PairedRole:
-        return devices[row]->property("Paired");
-    case SelectedRole:
+    case NameRole: {
+        QString name = device->property("Name").toString();
+        QString address = device->property("Address").toString();
+
+        if (name.size() == 0) {
+            return address;
+        }
+        return QString("%1 (%2)").arg(name, address);
+    }
+    case AddressRole: {
+        return device->property("Address");
+    }
+    case PairedRole: {
+        return device->property("Paired");
+    }
+    case SelectedRole: {
         return (row == connected);
-    default:
+    }
+    default: {
         return QVariant();
+    }
     }
 }
 
