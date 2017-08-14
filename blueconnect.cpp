@@ -328,6 +328,7 @@ void BlueConnect::unpair (uint index)
     }
 
     connected = -1;
+    emit dataChanged(createIndex(index - 1, 0), createIndex(index + 1, 0));
 }
 
 // QAbstractItemModel interface
