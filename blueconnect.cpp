@@ -51,6 +51,10 @@ BlueConnect::BlueConnect(QObject *parent) : QAbstractListModel(parent)
 
     connected = -1;
 
+    enableHandsfree = false;
+    enableMediaPlayer = false;
+    enablePhonebook = false;
+
     qDBusRegisterMetaType <InterfacesMap> ();
     qDBusRegisterMetaType <ObjectsMap> ();
     qDBusRegisterMetaType <Contact> ();
@@ -218,12 +222,13 @@ BluePlayer * BlueConnect::connect (uint index)
     auto a2dp_uuid = getProvileUUID(dev, A2DP_PREFIX);
     auto hfp_uuid = getProvileUUID(dev, HFP_PREFIX);
     auto hfp_uuid2 = getProvileUUID(dev, HFP_PREFIX2);
-    if (a2dp_uuid == Q_NULLPTR) {
+
+    if (enableMediaPlayer && a2dp_uuid == Q_NULLPTR) {
         qWarning() << "A2DP UUID not found";
         return Q_NULLPTR;
     }
 
-    if (hfp_uuid == Q_NULLPTR) {
+    if (enableHandsfree && hfp_uuid == Q_NULLPTR) {
         qWarning() << "HFP UUID not found";
         return Q_NULLPTR;
     }
@@ -242,31 +247,37 @@ BluePlayer * BlueConnect::connect (uint index)
     std::cout << "Trusting device: " << address << std::endl;
     dev->setProperty("Trusted", true);
 
-    m_phoneBook = new BluePhoneBook(address);
-    emit phoneBookAdded(m_phoneBook);
+    if (enablePhonebook) {
+        m_phoneBook = new BluePhoneBook(address);
+        emit phoneBookAdded(m_phoneBook);
+    }
 
-    m_handsfree = new BlueHandsfree();
-    emit handsfreeAdded(m_handsfree);
-
-    /* Connect the audio profile explicitly */
-    QDBusReply<void> reply = dev->call("ConnectProfile", a2dp_uuid);
-    if (!reply.isValid()) {
+    if (enableMediaPlayer) {
+        /* Connect the audio profile explicitly */
+        QDBusReply<void> reply = dev->call("ConnectProfile", a2dp_uuid);
+        if (!reply.isValid()) {
         std::cout << "Failed to connect A2DP: " << reply.error().message() << std::endl;
 
         return Q_NULLPTR;
+        }
     }
 
-    reply = dev->call("ConnectProfile", hfp_uuid);
-    if (!reply.isValid()) {
+    if (enableHandsfree) {
+        m_handsfree = new BlueHandsfree();
+        emit handsfreeAdded(m_handsfree);
+
+        QDBusReply<void> reply = dev->call("ConnectProfile", hfp_uuid);
+        if (!reply.isValid()) {
         std::cout << "Failed to connect HFP: " << reply.error().message() << std::endl;
-    }
+        }
 
-    reply = dev->call("ConnectProfile", hfp_uuid2);
-    if (!reply.isValid()) {
+        reply = dev->call("ConnectProfile", hfp_uuid2);
+        if (!reply.isValid()) {
         std::cout << "Failed to connect secondary HFP profile: " << reply.error().message() << std::endl;
+        }
     }
 
-    reply = dev->call("Connect");
+    QDBusReply<void> reply = dev->call("Connect");
     if (!reply.isValid()) {
         std::cout << "Failed to connect extra profiles: " << reply.error().message() << std::endl;
     }
