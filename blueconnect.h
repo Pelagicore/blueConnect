@@ -38,6 +38,10 @@ public:
 
     Q_PROPERTY(bool isConnected READ isConnected NOTIFY connectionChanged)
 
+    Q_PROPERTY(bool enablePhonebook MEMBER enablePhonebook)
+    Q_PROPERTY(bool enableMediaPlayer MEMBER enableMediaPlayer)
+    Q_PROPERTY(bool enableHandsfree MEMBER enableHandsfree)
+
     /* Connect to a device */
     Q_INVOKABLE BluePlayer * connect (uint index);
 
@@ -48,6 +52,10 @@ public:
     Q_INVOKABLE void unpair (uint index);
 
     bool isConnected() const;
+
+    bool enablePhonebook;
+    bool enableMediaPlayer;
+    bool enableHandsfree;
 
     // QAbstractItemModel interface
     virtual int rowCount(const QModelIndex &parent) const;
