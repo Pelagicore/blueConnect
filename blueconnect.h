@@ -61,6 +61,7 @@ public:
     virtual int rowCount(const QModelIndex &parent) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
 
+    void updateDevice(QDBusInterface *device);
 protected slots:
     void onInterfacesAdded(const QDBusObjectPath &path, const InterfacesMap interfaces);
     void onInterfacesRemoved(const QDBusObjectPath &path, const QStringList interfaces);
@@ -89,6 +90,7 @@ private:
     QHash<int, QByteArray> roles;
     BluePhoneBook *m_phoneBook;
     BlueHandsfree *m_handsfree;
+    int getDeviceIndex(QDBusInterface *dev);
 };
 
 #endif // BLUECONNECT_H

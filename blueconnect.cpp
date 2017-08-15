@@ -9,6 +9,7 @@
  */
 
 #include "blueconnect.h"
+#include "blueconnectpropertycallback.h"
 #include "iostream"
 #include <unistd.h>
 
@@ -103,6 +104,7 @@ void BlueConnect::onInterfacesAdded(const QDBusObjectPath &path,
                       << std::endl;
 
             addDevice (path);
+
         } else if (i.key() == "org.bluez.MediaPlayer1") {
             std::cout << "'org.bluez.MediaPlayer1' interface added at "
                       << path.path()
@@ -167,18 +169,42 @@ void BlueConnect::fetchObjects(QDBusInterface &manager)
     }
 }
 
+void BlueConnect::updateDevice(QDBusInterface *device)
+{
+    int index = getDeviceIndex(device);
+
+    // Don't update the HMI if there is no address
+    QString address = device->property("Address").toString();
+    if (!address.isEmpty()) {
+        emit dataChanged(createIndex(index - 1, 0), createIndex(index + 1, 0));
+    }
+}
+
 void BlueConnect::addDevice(QDBusObjectPath path)
 {
+    auto systemBus = QDBusConnection::systemBus();
     QDBusInterface *dev;
     dev = new QDBusInterface ("org.bluez",
                               path.path(),
                               "org.bluez.Device1",
-                              QDBusConnection::systemBus());
+                              systemBus);
+
     if (!checkExistingDev(dev)) {
         emit beginInsertRows(QModelIndex(), devices.length(), devices.length());
         devices << dev;
         emit endInsertRows();
+        new BlueConnectPropertyCallback(this, dev, path.path());
     }
+}
+
+int BlueConnect::getDeviceIndex(QDBusInterface *dev)
+{
+    for (int index = 0; index < devices.length(); ++index) {
+        if (dev == devices[index]) {
+            return index;
+        }
+    }
+    return -1;
 }
 
 void BlueConnect::setupAdapter(QDBusObjectPath path)
@@ -328,7 +354,6 @@ void BlueConnect::unpair (uint index)
     }
 
     connected = -1;
-    emit dataChanged(createIndex(index - 1, 0), createIndex(index + 1, 0));
 }
 
 // QAbstractItemModel interface
