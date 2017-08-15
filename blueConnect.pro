@@ -13,7 +13,8 @@ SOURCES += \
     contact.cpp \
     bluehandsfree.cpp \
     modem.cpp \
-    plugin.cpp
+    plugin.cpp \
+    blueconnectpropertycallback.cpp
 
 
 HEADERS += \
@@ -24,7 +25,8 @@ HEADERS += \
     contact.h \
     bluehandsfree.h \
     modem.h \
-    plugin.h
+    plugin.h \
+    blueconnectpropertycallback.h
 
 QMAKE_CXXFLAGS += -std=c++11
 
